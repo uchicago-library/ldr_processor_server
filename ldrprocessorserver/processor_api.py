@@ -235,8 +235,9 @@ class ConvenienceToGetLastPresformOrContent(Resource):
             output = {}
             if len(presform_list_ids) == 0:
                 mime = get_premis_mimetype(premis_record)
-                resp = send_file(content_item, mimetype=mime, as_attachment=True, attachment_filename=premisid)
-
+                file_extension = mime.split('/')[1]
+                resp = send_file(content_item, mimetype=mime,
+as_attachment=True, attachment_filename=premisid + "." + file_extension)
                 return resp
             else:
                 id_to_fetch + presform_id_list[-1]
@@ -245,12 +246,8 @@ class ConvenienceToGetLastPresformOrContent(Resource):
                 presform_item_premis_record = join("/data/repository/longTermStorage", '/'.join(arkid_split), '/'.join(id_to_fetch_split), '/premis.xml')
                 presform_item_presmis_root = get_premis_mimetype(createPremisObject(presform_item_premis_record))
                 presform_item_mime = get_premis_mimetype(presform_item_premis_root)
-                resp = send_file(presform_item, mimetype=presform_item_mime, as_attachment=True, attachment_filename=id_to_fetch)
-
-
-
-
-
+                presform_item_file_extension = presform_item_mime.split('/')[1]
+                resp = send_file(presform_item, mimetype=presform_item_mime, as_attachment=True, attachment_filename=id_to_fetch + "." + presform_item_file_extension)
             return jsonify(resp.dictify())
         except Exception as e:
             return jsonify(_EXCEPTION_HANDLER.handle(e).dictify())
